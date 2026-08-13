@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verificación de documentos · Taller de Negocios</title>
+<meta name="description" content="Verifica la autenticidad de los documentos emitidos por el sistema Taller de Negocios.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230F2D4A'/%3E%3Cpath d='M18 16 L34 16 L84 84 L68 84 Z' fill='%23FFFFFF'/%3E%3Cpath d='M84 16 L68 16 L18 84 L34 84 Z' fill='%23E96A2B'/%3E%3Cpath d='M44 40 L58 40 L58 60 L44 60 Z' fill='%233E6D8C'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0F2D4A;--campo:#3E6D8C;--naranja:#E96A2B;--arena:#E9E2D4;
+    --gris:#9AA6B2;--fondo:#F7F5F1;--ok:#2E7D5B;--error:#C0392B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);font-family:"IBM Plex Sans",Arial,sans-serif;color:#1A1A1A}
+  .wrap{max-width:660px;margin:0 auto;padding:0 18px 50px}
+
+  header{background:var(--navy);color:#fff;padding:26px 0}
+  header .wrap{padding-bottom:0;display:flex;align-items:center;gap:14px}
+  header svg{width:42px;height:42px;flex-shrink:0}
+  .marca{font-size:17px;font-weight:700;letter-spacing:1px;line-height:1.2}
+  .baj{color:var(--naranja);font-size:11px;margin-top:3px}
+
+  h1{font-family:"DM Serif Display",Georgia,serif;font-size:27px;color:var(--navy);
+    font-weight:400;margin:30px 0 8px}
+  .intro{color:#555;font-size:14.5px;line-height:1.65;margin:0 0 22px}
+
+  .card{background:#fff;border-radius:11px;padding:24px;box-shadow:0 1px 10px rgba(15,45,74,.06)}
+  label{display:block;font-size:12.5px;font-weight:500;color:#444;margin-bottom:6px}
+  input{width:100%;padding:13px 14px;border:1.5px solid #E3E3E3;border-radius:7px;
+    font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:1px;text-transform:uppercase}
+  input:focus{outline:none;border-color:var(--campo)}
+  .btn{background:var(--naranja);color:#fff;border:none;padding:13px 24px;border-radius:7px;
+    font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-top:14px}
+  .btn:disabled{background:var(--gris);cursor:not-allowed}
+  .ayuda{font-size:11.5px;color:#8A8A8A;margin-top:7px;line-height:1.5}
+
+  .resultado{margin-top:22px;display:none}
+  .banda{padding:18px 22px;border-radius:11px 11px 0 0;color:#fff;display:flex;align-items:center;gap:13px}
+  .banda.si{background:var(--ok)}
+  .banda.no{background:var(--error)}
+  .banda .ico{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.22);
+    display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .banda .txt{font-size:15.5px;font-weight:600;line-height:1.3}
+  .banda .sub{font-size:11.5px;font-weight:400;opacity:.9;margin-top:2px}
+  .cuerpo{background:#fff;border-radius:0 0 11px 11px;padding:22px;box-shadow:0 1px 10px rgba(15,45,74,.06)}
+  .dato{display:flex;padding:9px 0;border-bottom:1px solid #F2F0EC;font-size:13.5px;gap:14px}
+  .dato:last-child{border-bottom:none}
+  .dato .e{color:#8A8A8A;width:132px;flex-shrink:0;font-size:12.5px}
+  .dato .v{flex:1}
+  .folio{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--navy);letter-spacing:.5px}
+  .nota{background:var(--fondo);border-radius:7px;padding:13px 15px;font-size:12.5px;
+    color:#666;line-height:1.6;margin-top:16px}
+  .cargando{text-align:center;padding:26px;color:#888;font-size:13.5px}
+
+  footer{margin-top:38px;padding-top:22px;border-top:1px solid var(--arena);text-align:center}
+  footer .aut{font-size:12px;color:var(--navy);font-weight:600}
+  footer .der{font-size:11px;color:var(--gris);margin-top:4px;line-height:1.6}
+  footer a{color:var(--campo);text-decoration:none;font-size:11px}
+  .sep{color:var(--arena);margin:0 6px}
+  @media(max-width:520px){
+    h1{font-size:23px}
+    .dato{flex-direction:column;gap:2px}
+    .dato .e{width:auto}
+    .sep{display:none}
+    footer a{display:block;margin-top:5px}
+  }
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 4 L28 4 L92 92 L72 92 Z" fill="#FFFFFF"/>
+    <path d="M92 4 L72 4 L8 92 L28 92 Z" fill="#E96A2B"/>
+    <path d="M42 34 L58 34 L58 62 L42 62 Z" fill="#3E6D8C"/>
+  </svg>
+  <div><div class="marca">TALLER DE NEGOCIOS</div>
+    <div class="baj">De la Teoría a la Práctica; Vinculando a la Universidad con la Empresa</div></div>
+</div></header>
+
+<div class="wrap">
+  <h1>Verificación de documentos</h1>
+  <p class="intro">
+    Si recibiste una carta, una credencial o un certificado emitido por este sistema,
+    aquí puedes comprobar que es auténtico. Escribe el folio que aparece en el documento
+    o escanea su código.
+  </p>
+
+  <div class="card">
+    <label for="folio">Folio del documento</label>
+    <input type="text" id="folio" placeholder="TN-2026-0001-K3M9" autocomplete="off" spellcheck="false">
+    <button class="btn" id="btn">Verificar</button>
+    <div class="ayuda">El folio está impreso en la esquina superior del documento, junto al código de barras cuadrado.</div>
+  </div>
+
+  <div id="cargando" class="cargando" style="display:none">Consultando el folio...</div>
+  <div id="resultado" class="resultado"></div>
+
+  <footer>
+    <div class="aut">Sistema Taller de Negocios</div>
+    <div class="der">Desarrollado por Luis Ernest Leyton Johns<br>
+      &copy; 2026. Todos los derechos reservados.</div>
+    <div style="margin-top:8px">
+      <a href="https://www.linkedin.com/in/luis-leyton-johns" target="_blank" rel="noopener">LinkedIn</a>
+      <span class="sep">|</span>
+      <a href="https://orcid.org/0000-0002-4462-403X" target="_blank" rel="noopener">ORCID 0000-0002-4462-403X</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   Dirección del sistema. Es la URL de la aplicación web de Apps Script,
+   la que termina en /exec. Si algún día vuelves a publicar con otra
+   dirección, cámbiala aquí.
+------------------------------------------------------------------ */
+var ENDPOINT = 'https://script.google.com/macros/s/AKfycbw2ZXgw11LGeWREAPgf1V2i3bfhV3XPIafeuDIuSPf5c_d2erispA4uBhvpEr5q6Y7F/exec';
+
+var el = function(i){ return document.getElementById(i); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+function dato(etiqueta, valor, clase){
+  if(!valor) return '';
+  return '<div class="dato"><div class="e">'+etiqueta+'</div><div class="v '+(clase||'')+'">'+esc(valor)+'</div></div>';
+}
+
+/* Consulta mediante JSONP: evita los bloqueos de origen cruzado que
+   Apps Script produce al ser llamado desde otro dominio. */
+function consultar(folio){
+  el('resultado').style.display='none';
+  el('cargando').style.display='block';
+  el('btn').disabled=true;
+
+  var nombre='cb_'+Date.now();
+  var script=document.createElement('script');
+  var listo=false;
+
+  window[nombre]=function(datos){
+    listo=true;
+    el('cargando').style.display='none';
+    el('btn').disabled=false;
+    mostrar(datos);
+    delete window[nombre];
+    if(script.parentNode) script.parentNode.removeChild(script);
+  };
+
+  script.onerror=function(){
+    listo=true;
+    el('cargando').style.display='none';
+    el('btn').disabled=false;
+    mostrar({valido:false,motivo:'error',
+      mensaje:'No se pudo conectar con el sistema. Inténtalo nuevamente en unos minutos.'});
+  };
+
+  script.src=ENDPOINT+'?p=verificar&f='+encodeURIComponent(folio)+'&callback='+nombre;
+  document.body.appendChild(script);
+
+  setTimeout(function(){
+    if(listo) return;
+    el('cargando').style.display='none';
+    el('btn').disabled=false;
+    mostrar({valido:false,motivo:'error',mensaje:'La consulta demoró demasiado. Inténtalo nuevamente.'});
+  },15000);
+}
+
+function mostrar(d){
+  var h='';
+  if(d.valido){
+    h+='<div class="banda si"><div class="ico">&#10003;</div><div><div class="txt">Documento auténtico</div>'+
+       '<div class="sub">Emitido y aprobado por el docente responsable</div></div></div>';
+    h+='<div class="cuerpo">';
+    h+=dato('Folio', d.folio, 'folio');
+    h+=dato('Tipo de documento', d.tipo);
+    h+=dato('Fecha de emisión', d.emitido);
+    h+=dato('Institución', d.institucion);
+    h+=dato('Unidad académica', d.unidad);
+    h+=dato('Carrera', d.carrera);
+    h+=dato('Asignatura', d.asignatura + (d.codigo ? ' · ' + d.codigo : ''));
+    h+=dato('Período', d.periodo);
+    h+=dato('Docente responsable', d.docente);
+    h+=dato('Equipo', d.equipo);
+    if(d.integrantes && d.integrantes.length) h+=dato('Integrantes', d.integrantes.join(', '));
+    h+=dato('Empresa', d.empresa);
+    h+=dato('Representante', d.representante);
+    h+=dato('Estudiante', d.estudiante);
+    h+=dato('Calificación', d.calificacion);
+    h+=dato('Asistencia', d.asistencia);
+    h+='<div class="nota">Esta verificación confirma que el documento fue emitido por el sistema '+
+       'y aprobado por el docente. La información se muestra tal como fue registrada al momento de emitirlo.</div>';
+    h+='</div>';
+  } else {
+    var titulo = d.motivo==='anulado' ? 'Documento anulado'
+      : d.motivo==='no_aprobado' ? 'Documento sin aprobación'
+      : d.motivo==='no_existe' ? 'Folio no encontrado' : 'No se pudo verificar';
+    h+='<div class="banda no"><div class="ico">!</div><div><div class="txt">'+titulo+'</div>'+
+       (d.folio?'<div class="sub">Folio '+esc(d.folio)+'</div>':'')+'</div></div>';
+    h+='<div class="cuerpo"><p style="margin:0;font-size:14px;line-height:1.6;color:#444">'+
+       esc(d.mensaje||'No pudimos verificar este documento.')+'</p>'+
+       '<div class="nota">Si crees que se trata de un error, comunícate con el docente responsable '+
+       'de la asignatura antes de dar por válido el documento.</div></div>';
+  }
+  el('resultado').innerHTML=h;
+  el('resultado').style.display='block';
+}
+
+el('btn').onclick=function(){
+  var f=el('folio').value.trim().toUpperCase();
+  if(!f){ el('folio').focus(); return; }
+  consultar(f);
+};
+el('folio').addEventListener('keypress',function(e){ if(e.key==='Enter') el('btn').click(); });
+
+/* Si llega desde el código impreso, verifica de inmediato */
+(function(){
+  var p=new URLSearchParams(location.search);
+  var f=p.get('f');
+  if(f){ el('folio').value=f.toUpperCase(); consultar(f.toUpperCase()); }
+})();
+</script>
+</body>
+</html>

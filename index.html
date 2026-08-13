@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Verificación de documentos · Taller de Negocios</title>
-<meta name="description" content="Verifica la autenticidad de los documentos emitidos por el sistema Taller de Negocios.">
+<title>Taller de Negocios</title>
+<meta name="description" content="Plataforma de gestión del curso Taller de Negocios. Acceso de estudiantes y docentes, y verificación de documentos.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230F2D4A'/%3E%3Cpath d='M18 16 L34 16 L84 84 L68 84 Z' fill='%23FFFFFF'/%3E%3Cpath d='M84 16 L68 16 L18 84 L34 84 Z' fill='%23E96A2B'/%3E%3Cpath d='M44 40 L58 40 L58 60 L44 60 Z' fill='%233E6D8C'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
@@ -34,6 +34,20 @@
   .btn:disabled{background:var(--gris);cursor:not-allowed}
   .ayuda{font-size:11.5px;color:#8A8A8A;margin-top:7px;line-height:1.5}
 
+  .hero{padding:34px 0 4px}
+  .hero .lead{font-size:15px;color:#555;line-height:1.7;margin:0}
+  .accesos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:26px 0 8px}
+  .acceso-card{background:#fff;border-radius:11px;padding:24px;box-shadow:0 1px 10px rgba(15,45,74,.06);
+    display:flex;flex-direction:column}
+  .acceso-card h2{font-size:16px;color:var(--navy);margin:0 0 6px}
+  .acceso-card p{font-size:13px;color:#666;line-height:1.6;margin:0 0 16px;flex:1}
+  .acceso-card .quien{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--naranja);
+    letter-spacing:1.5px;margin-bottom:8px}
+  .btn.linea{background:#fff;color:var(--campo);border:1.5px solid var(--campo);margin-top:0;
+    display:block;text-align:center;text-decoration:none;padding:12px}
+  .btn.linea:hover{background:var(--fondo)}
+  a.btn{display:block;text-decoration:none;text-align:center}
+  .divisor{height:1px;background:var(--arena);margin:34px 0 0}
   .resultado{margin-top:22px;display:none}
   .banda{padding:18px 22px;border-radius:11px 11px 0 0;color:#fff;display:flex;align-items:center;gap:13px}
   .banda.si{background:var(--ok)}
@@ -63,6 +77,8 @@
     .dato .e{width:auto}
     .sep{display:none}
     footer a{display:block;margin-top:5px}
+    .accesos{grid-template-columns:1fr}
+    .hero{padding:26px 0 0}
   }
 </style>
 </head>
@@ -79,11 +95,37 @@
 </div></header>
 
 <div class="wrap">
-  <h1>Verificación de documentos</h1>
+  <div class="hero">
+    <h1>Taller de Negocios</h1>
+    <p class="lead">
+      Plataforma de gestión del curso. Los equipos consiguen una empresa real, diagnostican
+      un problema y desarrollan una solución tecnológica para resolverlo, con el respaldo
+      académico de su institución.
+    </p>
+  </div>
+
+  <div class="accesos">
+    <div class="acceso-card">
+      <div class="quien">ESTUDIANTES Y DOCENTES</div>
+      <h2>Entrar al sistema</h2>
+      <p>Actividades de la semana, entregas, materiales, asistencia y calificaciones.
+      Necesitas el usuario y la clave que recibió el representante de tu equipo.</p>
+      <a class="btn" id="b_sistema" href="#" target="_blank" rel="noopener">Ingresar</a>
+    </div>
+    <div class="acceso-card">
+      <div class="quien">EMPRESAS</div>
+      <h2>Verificar un documento</h2>
+      <p>Si un equipo te presentó una carta, una credencial o un certificado emitido por
+      este sistema, aquí compruebas que es auténtico.</p>
+      <a class="btn linea" href="#verificar">Verificar folio</a>
+    </div>
+  </div>
+
+  <div class="divisor"></div>
+
+  <h1 id="verificar" style="font-size:23px;margin-top:30px">Verificación de documentos</h1>
   <p class="intro">
-    Si recibiste una carta, una credencial o un certificado emitido por este sistema,
-    aquí puedes comprobar que es auténtico. Escribe el folio que aparece en el documento
-    o escanea su código.
+    Escribe el folio impreso en el documento o escanea su código.
   </p>
 
   <div class="card">
@@ -203,6 +245,8 @@ function mostrar(d){
   el('resultado').innerHTML=h;
   el('resultado').style.display='block';
 }
+
+el('b_sistema').href=ENDPOINT;
 
 el('btn').onclick=function(){
   var f=el('folio').value.trim().toUpperCase();
